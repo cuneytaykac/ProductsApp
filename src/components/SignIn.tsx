@@ -14,16 +14,17 @@ import { useFormik } from "formik";
 import { FaEye, FaEyeSlash, FaLock as LockIcon, FaUserAlt as PersonIcon } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { signInSchema } from "../schemas/schema.ts";
+import { signInSchema } from "../schemas/schema";
 import { useFetchSignInMutation } from "../store/apis/signInApi";
-import { AuthState, togglePasswordVisibility } from "../store/slices/authSlice/AuthSlice";
-
+import { AuthState, loginSuccess, setError, setLoading, togglePasswordVisibility } from "../store/slices/authSlice/AuthSlice";
 
 const SignIn = () => {
-  const [fetchSignIn, { isLoading, error }] = useFetchSignInMutation();
+  const [fetchSignIn] = useFetchSignInMutation();
   const dispatch = useDispatch();
-  const showPassword = useSelector((state: { auth: AuthState }) => state.auth.showPassword);
   const navigate = useNavigate();
+  const showPassword = useSelector((state:{auth:AuthState}) => state.auth.showPassword);
+  const isLoading = useSelector((state:{auth:AuthState}) => state.auth.isLoading);
+  const error = useSelector((state:{auth:AuthState}) => state.auth.error);
 
   const formik = useFormik({
     initialValues: {
@@ -33,11 +34,31 @@ const SignIn = () => {
     validationSchema: signInSchema,
     onSubmit: async (values) => {
       try {
+        dispatch(setLoading(true));
+        
+        // API Call
         const result = await fetchSignIn(values).unwrap();
-        console.log("Giriş başarılı:", result);
-       navigate('/home');
+        
+        // Update Redux & LocalStorage
+        dispatch(loginSuccess({
+          accessToken: result.accessToken,
+          refreshToken: result.refreshToken,
+          user: {
+            id: result.id,
+            username: result.username,
+            email: result.email,
+            firstName: result.firstName,
+            lastName: result.lastName,
+            image: result.image
+          }
+        }));
+        
+        // Redirect
+        navigate('/home');
       } catch (err) {
-        console.error("Giriş başarısız:", err);
+        dispatch(setError('Kullanıcı adı veya şifre hatalı!'));
+      } finally {
+        dispatch(setLoading(false));
       }
     },
   });
@@ -56,7 +77,6 @@ const SignIn = () => {
         backgroundImage: 'url(https://source.unsplash.com/random/1600x900/?login,background)',
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
       }}
     >
       <Container maxWidth="sm">
@@ -126,7 +146,7 @@ const SignIn = () => {
 
               {error && (
                 <Alert severity="error" sx={{ mb: 2 }}>
-                  Kullanıcı adı veya şifre hatalı!
+                  {error}
                 </Alert>
               )}
 
@@ -139,9 +159,7 @@ const SignIn = () => {
                 sx={{
                   py: 1.5,
                   fontWeight: 'bold',
-                  fontSize: '1rem',
                   background: 'linear-gradient(45deg, #1976d2 30%, #2196f3 90%)',
-                  boxShadow: '0 3px 5px 2px rgba(33, 150, 243, .3)',
                   '&:hover': {
                     background: 'linear-gradient(45deg, #1565c0 30%, #1e88e5 90%)',
                   }
