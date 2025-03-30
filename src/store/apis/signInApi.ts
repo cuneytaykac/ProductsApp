@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import { SignInModel } from "../models/SignInModel";
 
-// SignInAPI.ts
+
 export const SignInAPI = createApi({
   reducerPath: 'signInAPI',
   baseQuery: fetchBaseQuery({ baseUrl: 'https://dummyjson.com/auth/' }),
@@ -16,4 +16,4 @@ export const SignInAPI = createApi({
   }),
 });
 
-export const { useFetchSignInMutation } = SignInAPI; // DİKKAT: Artık mutation kullanıyoruz
+export const { useFetchSignInMutation } = SignInAPI; 
