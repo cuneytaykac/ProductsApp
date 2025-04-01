@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import { setupListeners } from "@reduxjs/toolkit/query/react";
 import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // localStorage için
+import { ProductAPI } from "./apis/product/productApi";
 import { SignInAPI } from "./apis/signInApi";
 import authReducer from "./slices/authSlice/AuthSlice";
 
@@ -18,11 +19,12 @@ export const store = configureStore({
     // Add the generated reducer as a specific top-level slice
     auth: persistedReducer,
     [SignInAPI.reducerPath]: SignInAPI.reducer,
+    [ProductAPI.reducerPath]: ProductAPI.reducer,
   },
   // Adding the api middleware enables caching, invalidation, polling,
   // and other useful features of `rtk-query`.
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({serializableCheck: { ignoredActions: ['persist/PERSIST'] }}).concat(SignInAPI.middleware),
+    getDefaultMiddleware({serializableCheck: { ignoredActions: ['persist/PERSIST'] }}).concat(SignInAPI.middleware, ProductAPI.middleware),
 })
 
 setupListeners(store.dispatch);
