@@ -5,7 +5,7 @@ import ProductItem from './ProductItem';
 import ProductItemSkeleton from './ProductItemSkeleton';
 
 export default function ProductList() {
-  const { data, isLoading, error } = useGetProductsQuery();
+  const { data, isLoading } = useGetProductsQuery();
   const searchTerm = useSelector((state: any) => state.search.term);
 
   const { data: searchedData, isLoading: isSearching } = useProductSearchQuery(

@@ -1,15 +1,21 @@
 import { Box, Button, Card, CardContent, CardMedia, Chip, Rating, Typography } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 import { Product } from '../store/models/products/ProductsResponse';
 
 export default function ProductItem({ product }: { product: Product }) {
+  const navigate = useNavigate();
+
   const handleAddToCart = () => {
     console.log('Ürün sepete eklendi:', product.title);
     // Buraya sepete ekleme işlemleri gelecek
    
   };
+   const handleCardClick = () => {
+    navigate(`/products/${product.id}`);
+  };
 
   return (
-    <Card sx={{ maxWidth: 345, height: '100%', display: 'flex', flexDirection: 'column' }}>
+    <Card sx={{ maxWidth: 345, height: '100%', display: 'flex', flexDirection: 'column' }} onClick={handleCardClick}>
       {/* Ürün Resmi */}
       {product.thumbnail && product.thumbnail.length > 0 && (
         <CardMedia

@@ -1,5 +1,5 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import { ProductResponse } from "../../models/products/ProductsResponse";
+import { Product, ProductResponse } from "../../models/products/ProductsResponse";
 
 
 export const ProductAPI = createApi({
@@ -27,11 +27,14 @@ export const ProductAPI = createApi({
           
            
         }),
+        getProductById: builder.query<Product, number>({
+  query: (id) => `products/${id}`,
+}),
         
     }),
     
 });
-export const { useGetProductsQuery, useProductSearchQuery } = ProductAPI; 
+export const { useGetProductsQuery, useProductSearchQuery,useGetProductByIdQuery} = ProductAPI; 
 
 
 
