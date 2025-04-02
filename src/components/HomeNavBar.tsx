@@ -25,9 +25,11 @@ import {
   FiUser,
   FiX
 } from 'react-icons/fi';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
+import { useProductSearchQuery } from '../store/apis/product/productApi';
 import { logout } from "../store/slices/authSlice/AuthSlice";
+import { setSearchTerm } from '../store/slices/product/ProductSeachSlice';
 
 const Navbar = () => {
   const theme = useTheme();
@@ -35,10 +37,20 @@ const Navbar = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+const searchTerm = useSelector((state:any) => state.search.term);
+useProductSearchQuery(
+  searchTerm, 
+  { 
+    skip: searchTerm.length < 2 ,
+    //  karakterden azsa atla
+  }
+ 
+);
+
+
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -49,18 +61,24 @@ const Navbar = () => {
     dispatch(logout());
   };
 
-  const handleSearch = () => {
-    if (searchQuery.trim()) {
-      navigate(`/search?q=${encodeURIComponent(searchQuery)}`);
+  const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (searchTerm.trim()) {
+      navigate(`/search?q=${encodeURIComponent(searchTerm)}`);
+     
     }
+   
     setSearchOpen(false);
-    setSearchQuery('');
+  dispatch(setSearchTerm(e.target));
+ 
+
   };
 
   const handleClickAway = () => {
     if (searchOpen && !isMobile) {
       setSearchOpen(false);
-      setSearchQuery('');
+      dispatch(setSearchTerm(""));
+
     }
   };
 
@@ -174,7 +192,8 @@ const Navbar = () => {
                     component="form"
                     onSubmit={(e) => {
                       e.preventDefault();
-                      handleSearch();
+                      handleSearch(e);
+                      
                     }}
                     sx={{
                       display: 'flex',
@@ -208,14 +227,20 @@ const Navbar = () => {
                           }
                         }
                       }}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      value={searchTerm}
+                      onChange={(e) => {
+                        dispatch(setSearchTerm(e.target.value));
+                        debugger;
+                         if (e.target.value.length > 2) { // Minimum 3 karakterde arama yap
+    //  useProductSearchQuery({ searchTerm: e.target.value });
+    }
+                      }}
                     />
                     <IconButton 
                       size="small" 
                       onClick={() => {
                         setSearchOpen(false);
-                        setSearchQuery('');
+                        dispatch(setSearchTerm(''));
                       }}
                       sx={{ color: 'text.secondary' }}
                     >
@@ -347,8 +372,7 @@ const Navbar = () => {
                 <Box
                   component="form"
                   onSubmit={(e) => {
-                    e.preventDefault();
-                    handleSearch();
+                    handleSearch(e);
                   }}
                   sx={{
                     flex: 1,
@@ -378,13 +402,13 @@ const Navbar = () => {
                         }
                       }
                     }}
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
+                    value={searchTerm}
+                    onChange={(e) => dispatch(setSearchTerm(e.target.value))}
                   />
-                  {searchQuery && (
+                  {searchTerm && (
                     <IconButton 
                       size="small" 
-                      onClick={() => setSearchQuery('')}
+                      onClick={() => dispatch(setSearchTerm(''))}
                       sx={{ color: 'text.secondary' }}
                     >
                       <FiX size={16} />

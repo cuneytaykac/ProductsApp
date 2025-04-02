@@ -5,6 +5,7 @@ export default function ProductItem({ product }: { product: Product }) {
   const handleAddToCart = () => {
     console.log('Ürün sepete eklendi:', product.title);
     // Buraya sepete ekleme işlemleri gelecek
+   
   };
 
   return (

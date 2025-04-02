@@ -8,14 +8,31 @@ export const ProductAPI = createApi({
         baseUrl: 'https://dummyjson.com/',
        
     }),
+    tagTypes: ['Products'],
     endpoints: (builder) => ({
         getProducts: builder.query<ProductResponse, void>({
+            providesTags: ['Products'],
             query: () => ({
                 url: 'products',
                 method: 'GET',
             }),
            
         }),
+        productSearch:builder.query<ProductResponse, string>({
+            query: (searchTerm) => ({
+                url: `products/search`,
+                method: 'GET',
+                params: { q: searchTerm },
+            }),
+          
+           
+        }),
+        
     }),
+    
 });
-export const { useGetProductsQuery } = ProductAPI; 
+export const { useGetProductsQuery, useProductSearchQuery } = ProductAPI; 
+
+
+
+

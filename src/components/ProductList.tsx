@@ -4,6 +4,8 @@ import ProductItem from './ProductItem';
 
 export default function ProductList() {
   const { data, isLoading, error } = useGetProductsQuery();
+   
+
   return (
     <>
       {isLoading ? <div>Loading...</div> :
