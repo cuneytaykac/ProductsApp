@@ -1,9 +1,20 @@
 import { Box, Grid } from '@mui/material';
-import { useGetProductsQuery } from '../store/apis/product/productApi';
+import { useSelector } from 'react-redux';
+import { useGetProductsQuery, useProductSearchQuery } from '../store/apis/product/productApi';
 import ProductItem from './ProductItem';
 
 export default function ProductList() {
   const { data, isLoading, error } = useGetProductsQuery();
+  const searchTerm = useSelector((state:any) => state.search.term);
+
+  useProductSearchQuery(
+  searchTerm, 
+  { 
+    skip: searchTerm.length < 2 ,
+    //  karakterden azsa atla
+  }
+ 
+);
    
 
   return (

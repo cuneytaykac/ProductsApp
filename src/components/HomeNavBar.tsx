@@ -27,7 +27,6 @@ import {
 } from 'react-icons/fi';
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
-import { useProductSearchQuery } from '../store/apis/product/productApi';
 import { logout } from "../store/slices/authSlice/AuthSlice";
 import { setSearchTerm } from '../store/slices/product/ProductSeachSlice';
 
@@ -41,14 +40,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 const searchTerm = useSelector((state:any) => state.search.term);
-useProductSearchQuery(
-  searchTerm, 
-  { 
-    skip: searchTerm.length < 2 ,
-    //  karakterden azsa atla
-  }
- 
-);
+
 
 
 
