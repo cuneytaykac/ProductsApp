@@ -1,27 +1,42 @@
 import { Box, Button, Card, CardContent, CardMedia, Chip, Rating, Typography } from '@mui/material';
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { Product } from '../store/models/products/ProductsResponse';
+import { addItem } from '../store/slices/basket/BasketSlice';
 
 export default function ProductItem({ product }: { product: Product }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Olayın üst elementlere yayılmasını engeller
     console.log('Ürün sepete eklendi:', product.title);
-    // Buraya sepete ekleme işlemleri gelecek
-   
+    dispatch(addItem(product));
   };
-   const handleCardClick = () => {
+
+  const handleCardClick = () => {
     navigate(`/products/${product.id}`);
   };
 
   return (
-    <Card sx={{ maxWidth: 345, height: '100%', display: 'flex', flexDirection: 'column' }} onClick={handleCardClick}>
+    <Card 
+      sx={{ 
+        maxWidth: 345, 
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column',
+        cursor: 'pointer',
+        '&:hover': {
+          boxShadow: 3
+        }
+      }} 
+      onClick={handleCardClick}
+    >
       {/* Ürün Resmi */}
-      {product.thumbnail && product.thumbnail.length > 0 && (
+      {product.thumbnail && (
         <CardMedia
           component="img"
           height="140"
-        
           image={product.thumbnail}
           alt={product.title}
           sx={{ objectFit: 'contain', p: 1 }}
@@ -40,7 +55,7 @@ export default function ProductItem({ product }: { product: Product }) {
           <Chip label={product.category} size="small" />
         </Box>
         
-        {/* Ürün Açıklaması (kısaltılmış) */}
+        {/* Ürün Açıklaması */}
         <Typography variant="body2" color="text.secondary" sx={{
           display: '-webkit-box',
           WebkitBoxOrient: 'vertical',
@@ -66,7 +81,15 @@ export default function ProductItem({ product }: { product: Product }) {
       </CardContent>
       
       {/* Fiyat ve Sepete Ekle Butonu */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', p: 2 }}>
+      <Box 
+        sx={{ 
+          display: 'flex', 
+          justifyContent: 'space-between', 
+          alignItems: 'center', 
+          p: 2 
+        }}
+        onClick={(e) => e.stopPropagation()} // Buton alanında kart tıklamasını engelle
+      >
         <Typography variant="h6" color="primary">
           ${product.price.toFixed(2)}
         </Typography>
@@ -75,6 +98,9 @@ export default function ProductItem({ product }: { product: Product }) {
           size="small"
           onClick={handleAddToCart}
           disabled={product.stock <= 0}
+          sx={{
+            zIndex: 1, // Butonun tıklanabilirliğini garanti altına al
+          }}
         >
           {product.stock > 0 ? 'Sepete Ekle' : 'Stokta Yok'}
         </Button>

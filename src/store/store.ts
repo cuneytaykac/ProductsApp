@@ -5,6 +5,7 @@ import storage from 'redux-persist/lib/storage'; // localStorage için
 import { ProductAPI } from "./apis/product/productApi";
 import { SignInAPI } from "./apis/signInApi";
 import authReducer from "./slices/authSlice/AuthSlice";
+import BasketSlice from "./slices/basket/BasketSlice";
 import searchSlice from "./slices/product/ProductSeachSlice";
 
 // Persist konfigürasyonu
@@ -20,6 +21,7 @@ export const store = configureStore({
     // Add the generated reducer as a specific top-level slice
     auth: persistedReducer,
     search: searchSlice,
+    basket: BasketSlice,
     [SignInAPI.reducerPath]: SignInAPI.reducer,
     [ProductAPI.reducerPath]: ProductAPI.reducer,
   },

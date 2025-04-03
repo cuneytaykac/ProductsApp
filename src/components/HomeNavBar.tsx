@@ -28,6 +28,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { logout } from "../store/slices/authSlice/AuthSlice";
+import { selectBasketItemCount } from '../store/slices/basket/BasketSlice';
 import { setSearchTerm } from '../store/slices/product/ProductSeachSlice';
 
 const Navbar = () => {
@@ -40,6 +41,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 const searchTerm = useSelector((state:any) => state.search.term);
+  const basketCount = useSelector(selectBasketItemCount);
+
 
 
 
@@ -277,7 +280,7 @@ const searchTerm = useSelector((state:any) => state.search.term);
                     }
                   }}
                 >
-                  <Badge badgeContent={3} color="primary">
+                  <Badge badgeContent={basketCount??0} color="primary">
                     <FiShoppingCart />
                   </Badge>
                 </IconButton>

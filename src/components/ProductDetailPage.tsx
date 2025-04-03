@@ -14,18 +14,22 @@ import {
     Typography
 } from '@mui/material';
 import { FaHeart, FaShare, FaShoppingCart } from 'react-icons/fa';
+import { useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetProductByIdQuery } from '../store/apis/product/productApi';
+import { addItem } from '../store/slices/basket/BasketSlice';
 import Navbar from './HomeNavBar';
 
 export default function ProductDetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { data: product, isLoading, error } = useGetProductByIdQuery(Number(id));
-
+  const dispatch = useDispatch();
   const handleAddToCart = () => {
     console.log('Ürün sepete eklendi:', product?.title);
     // Sepete ekleme işlemleri
+        dispatch(addItem(product!));
+
   };
 
   if (isLoading) return (
